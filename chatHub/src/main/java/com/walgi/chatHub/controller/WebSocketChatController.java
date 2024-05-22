@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 
 @Controller
 public class WebSocketChatController {
-
     @Autowired
     private MessageRepository messageRepository;
 
