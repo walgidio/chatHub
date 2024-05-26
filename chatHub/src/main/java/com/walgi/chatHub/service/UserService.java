@@ -5,6 +5,9 @@ import com.walgi.chatHub.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 @Service
 public class UserService {
 
@@ -19,6 +22,14 @@ public class UserService {
         if (userRepository.findByUsername(user.getUsername()) != null) {
             throw new RuntimeException("Username already exists");
         }
+        // Calcular o hash da senha usando MD5
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] hashedPassword = md.digest(user.getPassword().getBytes());
+            user.setPassword(new String(hashedPassword)); // Armazenar o hash da senha
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing password", e);
+        }
         return userRepository.save(user);
     }
 
@@ -28,11 +39,18 @@ public class UserService {
         if (user == null){
             throw new RuntimeException("User not found");
         }
-        // Verificar se a senha está correta
-        if (!password.equals(user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+        // Calcular o hash da senha fornecida
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] hashedPassword = md.digest(password.getBytes());
+            String hashedPasswordString = new String(hashedPassword);
+            // Verificar se a senha (hash) está correta
+            if (!hashedPasswordString.equals(user.getPassword())) {
+                throw new RuntimeException("Invalid password");
+            }
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing password", e);
         }
         return user;
     }
-
 }

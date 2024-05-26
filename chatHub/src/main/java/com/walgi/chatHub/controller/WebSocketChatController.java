@@ -15,11 +15,10 @@ public class WebSocketChatController {
     private MessageRepository messageRepository;
 
     @MessageMapping("/send")
-    @SendTo("/topic/messages")
+    @SendTo("/topic/messages") // Enviar a mensagem para todos os inscritos no tópico
     public Message send(Message message) throws Exception {
         message.setTimestamp(LocalDateTime.now());
         messageRepository.save(message);
         return message;
     }
 }
-
