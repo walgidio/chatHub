@@ -2,10 +2,11 @@ package com.walgi.chatHub.zookeeper;
 
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
-
+import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.List;
 
+@Component
 public class ZooKeeperClient {
     private static final String ZOOKEEPER_HOST = "localhost:2181";
     private ZooKeeper zooKeeper;
@@ -47,26 +48,22 @@ public class ZooKeeperClient {
         }
     }
 
-
     public String selectBestServer() throws KeeperException, InterruptedException {
         List<String> servers = zooKeeper.getChildren("/servers", false);
         String bestServer = null;
         int minLoad = Integer.MAX_VALUE;
         String bestServerIp = null;
-
         for (String server : servers) {
             byte[] serverData = zooKeeper.getData("/servers/" + server, false, null);
             String[] dataParts = new String(serverData).split(":");
             String ip = dataParts[0];
             int load = Integer.parseInt(dataParts[1]);
-
             if (load < minLoad) {
                 minLoad = load;
                 bestServer = server;
                 bestServerIp = ip;
             }
         }
-
         return bestServerIp;
     }
 
