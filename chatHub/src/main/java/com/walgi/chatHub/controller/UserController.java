@@ -14,9 +14,11 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+    private final UserService userService;
 
-    @Autowired
-    private UserService userService;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/api/best-server")
     public String getBestServer() throws KeeperException, InterruptedException, IOException {

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Component
 public class ZooKeeperClient {
-    private static final String ZOOKEEPER_HOST = "localhost:2181";
+    private static final String ZOOKEEPER_HOST = "192.168.1.227:2181";
     private ZooKeeper zooKeeper;
 
     public ZooKeeperClient() throws IOException {

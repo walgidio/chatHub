@@ -10,11 +10,11 @@ import java.security.NoSuchAlgorithmException;
 
 @Service
 public class UserService {
+    private final UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    public UserService() {
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public User registerUser(User user) {
