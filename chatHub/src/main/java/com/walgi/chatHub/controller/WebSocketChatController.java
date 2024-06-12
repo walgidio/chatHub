@@ -15,12 +15,16 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 @Controller
 public class WebSocketChatController {
 
     @Autowired
     private MessageRepository messageRepository;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private ZooKeeperClient zooKeeperClient;
@@ -39,6 +43,7 @@ public class WebSocketChatController {
     public Message send(Message message) throws Exception {
         message.setTimestamp(LocalDateTime.now());
         messageRepository.save(message);
+        rabbitTemplate.convertAndSend("chatQueue", message.getContent()); // Envia a mensagem para a fila do RabbitMQ
         int newLoad = currentLoad.incrementAndGet(); // Incrementa a carga
         updateLoad(newLoad);
         return message;
