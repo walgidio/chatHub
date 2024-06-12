@@ -5,13 +5,33 @@ document.addEventListener("DOMContentLoaded", function(event) {
     connect();
 });
 
+function getBestServer() {
+    return fetch('/api/users/best-server')
+        .then(response => response.text())
+        .then(serverIp => {
+            console.log("Best server IP: " + serverIp);
+            return serverIp;
+        })
+        .catch(error => {
+            console.error('Error getting best server:', error);
+            return null;
+        });
+}
+
 function connect() {
-    var socket = new SockJS('/chat-websocket');
-    stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
-        console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/messages', function (message) {
-            showMessage(JSON.parse(message.body));
+    getBestServer().then(serverIp => {
+        if (!serverIp) {
+            alert("Failed to get the best server. Please try again later.");
+            return;
+        }
+
+        var socket = new SockJS('http://' + serverIp + ':8081/chat-websocket');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/messages', function (message) {
+                showMessage(JSON.parse(message.body));
+            });
         });
     });
 }
@@ -106,3 +126,4 @@ function register() {
         console.error('Error:', error);
     });
 }
+
