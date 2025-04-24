@@ -41,27 +41,17 @@ The ChatHub application has a distributed architecture with the following compon
 ## Usage
 WebSocket Configuration
 Connecting to the WebSocket:
-
 Frontend clients connect via the /chat-websocket endpoint using SockJS and STOMP protocols.
+
 Sending Messages:
-
 Messages are sent to the /app/send endpoint.
-Receiving Messages:
 
+Receiving Messages:
 Subscribe to /topic/messages to receive chat messages in real-time.
+
 Client-Side Setup
 The frontend JavaScript uses SockJS and STOMP to manage WebSocket connections. Users connect to the optimal server endpoint based on ZooKeeper's load balancing.
 
-javascript
-Copiar código
-var socket = new SockJS('/chat-websocket');
-var stompClient = Stomp.over(socket);
-stompClient.connect({}, function(frame) {
-    console.log("Connected: " + frame);
-    stompClient.subscribe("/topic/messages", function(message) {
-        console.log(JSON.parse(message.body));
-    });
-});
 ## Endpoints
 User Management
 POST /api/users/register - Register a new user
